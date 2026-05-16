@@ -24,17 +24,22 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         playerParticles = GetComponent<PlayerParticles>();
-        playerAnimator = GetComponent<PlayerAnimator>();
-        playerAudio = GetComponent<PlayerAudio>();
+        playerAnimator  = GetComponent<PlayerAnimator>();
+        playerAudio     = GetComponent<PlayerAudio>();
     }
 
     void Update()
     {
+        // Ленивая инициализация — на случай если компонент добавлен позже Start()
+        if (playerAnimator == null) playerAnimator = GetComponent<PlayerAnimator>();
+        if (playerParticles == null) playerParticles = GetComponent<PlayerParticles>();
+        if (playerAudio == null) playerAudio = GetComponent<PlayerAudio>();
+
         float moveX = moveInput.x;
         rb.linearVelocity = new Vector2(moveX * moveSpeed, rb.linearVelocity.y);
 
-        // Обновляем направление в аниматоре
-        if (playerAnimator != null)
+        // Направление берём из moveInput — он ненулевой только при зажатой клавише
+        if (playerAnimator != null && Mathf.Abs(moveX) > 0.01f)
             playerAnimator.SetFacingDirection(moveX);
     }
 
